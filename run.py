@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, make_response
+from gevent.pywsgi import WSGIServer
 import review
 
 app = Flask(__name__)
@@ -33,5 +34,9 @@ def report_mistake():
     return make_response("", 204)
 
 if __name__ == '__main__':
-    app.run(debug=False, port=80, threaded=True, host='0.0.0.0')
+    # app.run(debug=False, port=80, threaded=True, host='0.0.0.0')
+    http_server = WSGIServer(
+        ('0.0.0.0', 80), app,
+    )
+    http_server.serve_forever()
     
