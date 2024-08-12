@@ -6,6 +6,7 @@ var height_now;
 var top_now;
 var width_now;
 var xhr = new XMLHttpRequest();
+var reg = /[\u4e00-\u9fa5]/;
 
 
 
@@ -61,11 +62,14 @@ function displayNextItem() {
             audioPlayer.pause();
             audioPlayer.play();
         } else {
-            if (word_check % 2 == 1) {
+            if (! reg.test(show_word)) {
                 mistake_btn.style.display = 'none';
                 audioPlayer.src = "http://dict.youdao.com/dictvoice?type=1&audio=" + show_word;
                 audioPlayer.pause();
                 audioPlayer.play();
+            }
+            if (word_check % 2 == 1) {
+                mistake_btn.style.display = 'none';
             } else {
                 mistake_btn.style.display = 'block';
             }
@@ -165,7 +169,11 @@ btn.addEventListener('click', function () {
 
 var mistake_list = [];
 mistake_btn.addEventListener('click', function () {
-    mistake_list.push(my_list[currentIndex-2]);
+    var mistake = my_list[currentIndex-2];
+    if (reg.test(mistake)) {
+        mistake = my_list[currentIndex-1]
+    }
+    mistake_list.push(mistake);
 });
 
 const radioButtons = document.querySelectorAll('.radio-button input[name="option"]');

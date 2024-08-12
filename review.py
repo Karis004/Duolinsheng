@@ -1,6 +1,7 @@
 import openpyxl
 import datetime
 import pickle
+import re
 
 
 def review(user_name, learn_words='5'):
@@ -34,9 +35,14 @@ def review(user_name, learn_words='5'):
             new_word += 1
             new_word_list.append([entry[0],entry[1]])
         elif entry[3] <= today_str:
-            res.append(entry[0]+'\n')
-            res.append(entry[1]+'\n')
             times = int(entry[4])
+            if times % 3 == 0:
+                chinese_sub = re.sub('[a-zA-Z]', '', entry[1])
+                res.append(chinese_sub+'\n')
+                res.append(entry[0]+'\n')
+            else:
+                res.append(entry[0]+'\n')
+                res.append(entry[1]+'\n')
             next_date = today + datetime.timedelta(days=diff[times])
             next_date = next_date.strftime('%Y-%m-%d')
             sheet.cell(row=row, column=4).value = next_date
