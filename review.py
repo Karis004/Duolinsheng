@@ -50,8 +50,14 @@ def review(user_name, learn_words='5'):
         row += 1
 
     days = sheet.cell(row=2, column=8).value
-    if sheet.cell(row=2, column=9).value != today_str:
-        new_days = int(days)+1
+    last_date = sheet.cell(row=2, column=9).value
+    yesterday = today - datetime.timedelta(days=1)
+    yesterday_str = yesterday.strftime('%Y-%m-%d')
+    if last_date != today_str:
+        if last_date != yesterday_str:
+            new_days = 1
+        else:
+            new_days = int(days)+1
         sheet.cell(row=2, column=8).value = str(new_days)
         sheet.cell(row=2, column=9).value = today_str
     else:
