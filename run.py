@@ -1,6 +1,7 @@
+import review
 from flask import Flask, render_template, request, jsonify, make_response
 from gevent.pywsgi import WSGIServer
-import review
+
 
 app = Flask(__name__)
 
@@ -30,13 +31,14 @@ def report_mistake():
     file_name = data.get('file_name', 'Karis')
     mistake_list = [x for i, x in enumerate(mistake_list) if x not in mistake_list[:i]]
     review.report_mistake(mistake_list, file_name)
-    
     return make_response("", 204)
-
+    
+        
 if __name__ == '__main__':
     # app.run(debug=True, port=80, threaded=True, host='0.0.0.0')
     http_server = WSGIServer(
         ('0.0.0.0', 80), app,
     )
     http_server.serve_forever()
+    
     

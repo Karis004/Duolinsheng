@@ -2,6 +2,8 @@ import openpyxl
 import datetime
 import pickle
 import re
+import requests
+import SendKey
 
 
 def review(user_name, learn_words='5'):
@@ -110,4 +112,18 @@ def report_mistake(mistake_list, user_name):
         
     workbook.save(file_name)
     workbook.close()
-    
+
+
+def send_reminder():
+    print('Reminder sent!')
+    user_name_list = SendKey.user_name_list
+    for user_name in user_name_list:
+        file_name = 'record-'+user_name+'.xlsx'
+        workbook = openpyxl.load_workbook(file_name)
+        sheet = workbook.active
+        today = datetime.date.today()
+        today_str = today.strftime('%Y-%m-%d')
+        if sheet.cell(row=2, column=9).value != today_str:
+            url = 'https://sctapi.ftqq.com/'+user_name_list[user_name]+'.send?title=Duolinsheng%20is%20waiting%20you%20:)'
+            requests.get(url)
+        workbook.close()

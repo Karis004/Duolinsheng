@@ -147,10 +147,11 @@ btn.addEventListener('click', function () {
             alert('请选择用户');
             return;
         }
+        learn_words = input_learn_words.value;
+        console.log(learn_words)
         if (learn_words == undefined) {
             input_learn_words.value = '5';
         }
-        learn_words = input_learn_words.value;
         document.cookie = "learn_words=" + learn_words;
         display_review();
         start_flag = false;
