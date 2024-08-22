@@ -25,10 +25,12 @@ def review(user_name, learn_words='5'):
     new_word_list = []
     for entry in sheet.iter_rows(min_row=2,values_only=True):
         if entry[3] == None:
-            if new_word > learn_words:
+            if new_word > learn_words or row == 53:
                 for word in new_word_list:
                     res.append(word[0]+'\n')
                     res.append(word[1]+'\n')
+                if row == 53:
+                    res.append("你已学完该单词本!")
                 break
             res.append(wave+'\n'+entry[0]+'\n\n'+entry[1]+'\n'+wave+'\n')
             sheet.cell(row=row, column=3).value = today_str
@@ -115,7 +117,6 @@ def report_mistake(mistake_list, user_name):
 
 
 def send_reminder():
-    print('Reminder sent!')
     user_name_list = SendKey.user_name_list
     for user_name in user_name_list:
         file_name = 'record-'+user_name+'.xlsx'

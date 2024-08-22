@@ -1,8 +1,9 @@
 import schedule
 import time
-import threading
 import review
+import logging
 
+logger = logging.getLogger(__name__)
 
 schedule.every().day.at("22:00").do(review.send_reminder)
 def run_scheduler():
@@ -10,8 +11,7 @@ def run_scheduler():
         schedule.run_pending()
         time.sleep(1)
         
-        
-if __name__ == '__main__':
-    scheduler_thread = threading.Thread(target=run_scheduler)
-    scheduler_thread.start()
-    
+try:
+    run_scheduler()
+except Exception as e:
+    logger.error(e, exc_info=True)

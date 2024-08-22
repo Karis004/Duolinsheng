@@ -1,9 +1,12 @@
 import review
 from flask import Flask, render_template, request, jsonify, make_response
 from gevent.pywsgi import WSGIServer
+import logging
 
 
 app = Flask(__name__)
+logging.basicConfig(filename='dls.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 @app.route('/')
 def index():
