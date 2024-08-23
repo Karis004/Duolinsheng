@@ -5,8 +5,6 @@ import logging
 
 
 app = Flask(__name__)
-logging.basicConfig(filename='dls.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
 
 @app.route('/')
 def index():

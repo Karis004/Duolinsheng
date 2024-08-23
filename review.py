@@ -4,6 +4,7 @@ import pickle
 import re
 import requests
 import SendKey
+import logging
 
 
 def review(user_name, learn_words='5'):
@@ -117,6 +118,7 @@ def report_mistake(mistake_list, user_name):
 
 
 def send_reminder():
+    logging.info('send_reminder function is running...')
     user_name_list = SendKey.user_name_list
     for user_name in user_name_list:
         file_name = 'record-'+user_name+'.xlsx'
