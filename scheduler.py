@@ -5,7 +5,7 @@ import logging
 
 logging.basicConfig(filename='dls.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-schedule.every().day.at("20:00").do(review.send_reminder)
+schedule.every().day.at("14:00").do(review.send_reminder)
 def run_scheduler():
     while True:
         schedule.run_pending()

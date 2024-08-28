@@ -20,11 +20,13 @@ def review(user_name, learn_words='5'):
     today_str = today.strftime('%Y-%m-%d')
     next_date_one = next_date_one.strftime('%Y-%m-%d')
 
-    diff = [1,1,2,3,3,5,5,10,10,20]
+    diff = [1,1,2,3,3,5,5,10,10,20,20,20,40]
     row = 2
     new_word = 1
     new_word_list = []
     for entry in sheet.iter_rows(min_row=2,values_only=True):
+        if entry[0] == None:
+            break
         if entry[3] == None:
             if new_word > learn_words or row == 53:
                 for word in new_word_list:
@@ -48,7 +50,8 @@ def review(user_name, learn_words='5'):
             else:
                 res.append(entry[0]+'\n')
                 res.append(entry[1]+'\n')
-            next_date = today + datetime.timedelta(days=diff[times])
+            days =  diff[times] if times <= 12 else 40
+            next_date = today + datetime.timedelta(days=days)
             next_date = next_date.strftime('%Y-%m-%d')
             sheet.cell(row=row, column=4).value = next_date
             sheet.cell(row=row, column=5).value = str(times+1)
@@ -102,15 +105,17 @@ def report_mistake(mistake_list, user_name):
     workbook = openpyxl.load_workbook(file_name)
     sheet = workbook.active
     search_string = mistake_list[0][:-1]
-    count_list = 1
+    count_list = 0
     count_row = 2
     for row in sheet.iter_rows(min_row=2, values_only=True):
         if row[0] == search_string:
             sheet.cell(row=count_row, column=4).value = tomorrow
-            search_string = mistake_list[count_list][:-1]
+            sheet.cell(row=count_row, column=5).value = int(row[4]) - 1
+            sheet.cell(row=count_row, column=6).value = row[5] + 1
             count_list += 1
             if count_list == len(mistake_list):
                 break
+            search_string = mistake_list[count_list][:-1]
         count_row += 1
         
     workbook.save(file_name)
@@ -130,3 +135,25 @@ def send_reminder():
             url = 'https://sctapi.ftqq.com/'+user_name_list[user_name]+'.send?title=Duolinsheng%20is%20waiting%20you%20:)'
             requests.get(url)
         workbook.close()
+        
+
+def error_book(user_name):
+    file_name = 'record-'+user_name+'.xlsx'
+    workbook = openpyxl.load_workbook(file_name)
+    sheet = workbook.active
+    res = []
+    error_num_list = []
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        if row[0] == None:
+            break
+        if row[5] > 0:
+            res.append(row[0]+'\n')
+            res.append(row[1]+'\n')
+            error_num_list.append(row[5])
+    if len(error_num_list) == 0:
+        res = 'No error!'
+    workbook.close()
+    return res, error_num_list
+    
+
+            

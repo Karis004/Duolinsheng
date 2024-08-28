@@ -33,13 +33,19 @@ def report_mistake():
     mistake_list = [x for i, x in enumerate(mistake_list) if x not in mistake_list[:i]]
     review.report_mistake(mistake_list, file_name)
     return make_response("", 204)
-    
+
+@app.route('/error_book', methods=['POST'])
+def error_book():
+    data = request.get_json()
+    file_name = data.get('file_name', 'Karis')
+    res, error_num_list = review.error_book(file_name)
+    return jsonify(res=res, error_num_list=error_num_list)
         
 if __name__ == '__main__':
-    # app.run(debug=True, port=80, threaded=True, host='0.0.0.0')
-    http_server = WSGIServer(
-        ('0.0.0.0', 80), app,
-    )
-    http_server.serve_forever()
+    app.run(debug=True, port=80, threaded=True, host='0.0.0.0')
+    # http_server = WSGIServer(
+    #     ('0.0.0.0', 80), app,
+    # )
+    # http_server.serve_forever()
     
     

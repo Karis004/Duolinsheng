@@ -3,10 +3,12 @@ var currentIndex = 0;
 var file_name;
 var learn_words;
 var height_now;
-var top_now;
 var width_now;
+var top_now;
+var right_now;
 var xhr = new XMLHttpRequest();
 var reg = /[\u4e00-\u9fa5]/;
+var error_num_list;
 
 
 function confettiJs() {
@@ -75,7 +77,7 @@ var word_check = 1;
 
 function displayNextItem() {
     var show_word = my_list[currentIndex]
-    document.getElementById('itemDisplay').innerText = show_word;
+    document.getElementById('itemDisplay').querySelector('span').innerText = show_word;
     if ((currentIndex + 1) != my_list.length) {
         if (show_word.charAt(0) == '~') {
             mistake_btn.style.display = 'none';
@@ -99,6 +101,9 @@ function displayNextItem() {
             } else {
                 mistake_btn.style.display = 'block';
             }
+            if (error_num_list){
+                red_badge.innerText =  error_num_list[Math.round(((word_check-1)%(error_num_list.length*2)+1)/2)-1]
+            }
             if (show_word.includes('单词本')) {
                 celebrate();
                 word_check++;
@@ -106,6 +111,9 @@ function displayNextItem() {
             word_check++;
         }
     } else {
+        if (error_num_list){
+            red_badge.style.display = 'none';
+        }
         mistake_btn.style.display = 'none';
         if (mistake_list.length > 0) {
             xhr.open("POST", "/report_mistake", true);
@@ -119,9 +127,7 @@ function displayNextItem() {
             };
             xhr.send(JSON.stringify({ mistake_list: mistake_list, file_name: file_name }));
         }
-
     }
-
     currentIndex++;
     if (currentIndex == my_list.length) {
         currentIndex = 0;
@@ -160,6 +166,7 @@ async function display_review() {
     width_now = btn.offsetWidth;
     height_now = btn.offsetHeight;
     top_now = btn.getBoundingClientRect().top;
+    right_now = btn.getBoundingClientRect().right;
     mistake_btn.style.top = top_now + height_now + 30 + 'px';
     mistake_btn.style.width = width_now + 'px';
 }
@@ -169,7 +176,7 @@ var select_btn = document.getElementById('radio-buttons');
 var btn = document.getElementById('itemDisplay');
 var input_learn_words = document.getElementById('input');
 var mistake_btn = document.getElementById('mistake_btn');
-var test = document.getElementById('test');
+// var test = document.getElementById('test');
 
 btn.addEventListener('click', function () {
     if (start_flag) {
@@ -187,13 +194,17 @@ btn.addEventListener('click', function () {
         select_btn.style.display = 'none';
         input_learn_words.style.display = 'none';
         review_btn.style.display = 'none';
+        error_book_img.style.display = 'none';
     } else {
         displayNextItem();
         height_now = btn.offsetHeight;
         width_now = btn.offsetWidth;
         top_now = btn.getBoundingClientRect().top;
+        right_now = btn.getBoundingClientRect().right;
         mistake_btn.style.top = top_now + height_now + 30 + 'px';
         mistake_btn.style.width = width_now + 'px';
+        red_badge.style.top = top_now - 15 + 'px';
+        red_badge.style.left = right_now - 20 + 'px';
     }
 });
 
@@ -279,6 +290,7 @@ async function display_review_to_get_review() {
         review_btn.style.display = 'none';
         select_btn.style.display = 'none';
         input_learn_words.style.display = 'none';
+        error_book_img.style.display = 'none';
         displayNextItem();
     } else {
         alert('多少先学点吧！');
@@ -290,3 +302,52 @@ review_btn.addEventListener('click', function () {
     display_review_to_get_review();
 });
 
+var red_badge = document.getElementById('red_badge');
+var error_book_img = document.getElementById('error_book_img')
+error_book_img.addEventListener('click', function () {
+    display_review_to_error_book();
+});
+
+function send_post_to_error_book() {
+    var promise = new Promise(function (resolve, reject) {
+        var data = JSON.stringify({ file_name: file_name });
+        xhr.open("POST", "/error_book", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                var response = JSON.parse(xhr.responseText);
+                my_list = response.res;
+                error_num_list = response.error_num_list;
+                resolve([my_list, error_num_list]);
+            } else {
+                reject(xhr.statusText);
+            }
+        };
+        xhr.send(data);
+    })
+    return promise;
+}
+
+async function display_review_to_error_book() {
+    var get_data = await send_post_to_error_book();
+    my_list = get_data[0];
+    error_num_list = get_data[1];
+    if (Array.isArray(my_list)) {
+        my_list.push('复习完了！');
+        red_badge.innerText = error_num_list[0]
+        start_flag = false;
+        review_btn.style.display = 'none';
+        select_btn.style.display = 'none';
+        input_learn_words.style.display = 'none';
+        error_book_img.style.display = 'none';
+        error_book_img.style.display = 'none';
+        displayNextItem();
+        top_now = btn.getBoundingClientRect().top;
+        right_now = btn.getBoundingClientRect().right;
+        red_badge.style.top = top_now - 15 + 'px';
+        red_badge.style.left = right_now - 20 + 'px';
+        red_badge.style.visibility = 'visible'
+    } else {
+        alert('没有案底');
+    }
+}
