@@ -42,10 +42,8 @@ def error_book():
     return jsonify(res=res, error_num_list=error_num_list)
         
 if __name__ == '__main__':
-    app.run(debug=True, port=80, threaded=True, host='0.0.0.0')
-    # http_server = WSGIServer(
-    #     ('0.0.0.0', 80), app,
-    # )
-    # http_server.serve_forever()
-    
-    
+    # app.run(debug=True, port=80, threaded=True, host='0.0.0.0')
+    http_server = WSGIServer(
+        ('0.0.0.0', 80), app,
+    )
+    http_server.serve_forever()
