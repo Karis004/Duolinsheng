@@ -7,4 +7,23 @@
   - This project is Anki lite, of course.
 - Add review feature, mistakes book feature.
 
+## Docker port mapping
+
+`docker-compose.yml` publishes host port **8081** to port **80** inside the
+container. The Python server in `run.py` continues listening on container port 80.
+The mapping order is `HOST_PORT:CONTAINER_PORT`.
+
+Validate the configuration without building or starting a container:
+
+```sh
+docker compose config --quiet
+```
+
+Changing the mapping takes effect when the container is recreated. Before
+redeploying an existing installation, back up its current learning records
+(`/app/record-*.xlsx` and `/app/today_words-*.txt`) and local configuration
+(`/app/SendKey.py`). These files are not tracked by Git, and the existing server
+container has no persistent data mount. Also review any server-side Git changes
+and its existing Compose file before pulling or rebuilding.
+
 ![evil bird](https://i.ibb.co/7ytzHmt/983331e25477d704dcd3613bc57a026-transformed.png)

@@ -1,0 +1,6 @@
+services:
+  run:
+    build: .
+    restart: always
+    ports:
+      - "8081:80"
