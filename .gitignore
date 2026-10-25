@@ -8,3 +8,8 @@ today_words-Tracy.txt
 SendKey.py
 dls.log
 .vscode
+data/
+backups/
+dls/
+record-*.xlsx
+today_words-*.txt

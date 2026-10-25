@@ -1,0 +1,14 @@
+.git
+.vscode
+__pycache__
+*.py[cod]
+.env
+.env.*
+SendKey.py
+record-*.xlsx
+today_words-*.txt
+2024-7-23-prankster.xlsx
+dls.log
+data/
+backups/
+dls/

@@ -3,7 +3,7 @@ import time
 import review
 import logging
 
-logging.basicConfig(filename='dls.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename=review.data_path('dls.log'), level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 schedule.every().day.at("14:00").do(review.send_reminder)
 def run_scheduler():

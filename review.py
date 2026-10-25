@@ -5,13 +5,14 @@ import re
 import requests
 import SendKey
 import logging
+from storage import data_path
 
 
 def review(user_name, learn_words='5'):
     learn_words = int(learn_words)
     res = []
     wave = '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'  #32
-    file_name = 'record-'+user_name+'.xlsx'
+    file_name = data_path('record-'+user_name+'.xlsx')
     workbook = openpyxl.load_workbook(file_name)
     sheet = workbook.active
 
@@ -73,7 +74,7 @@ def review(user_name, learn_words='5'):
 
     workbook.save(file_name)
     workbook.close()
-    txt_name = 'today_words-'+user_name+'.txt'
+    txt_name = data_path('today_words-'+user_name+'.txt')
     
     with open(txt_name, 'wb') as file:
         pickle.dump(res, file)
@@ -81,14 +82,14 @@ def review(user_name, learn_words='5'):
     return res, new_days
 
 def get_review(user_name):
-    file_name = 'record-'+user_name+'.xlsx'
+    file_name = data_path('record-'+user_name+'.xlsx')
     workbook = openpyxl.load_workbook(file_name)
     sheet = workbook.active
     today = datetime.date.today()
     today_str = today.strftime('%Y-%m-%d')
     if sheet.cell(row=2, column=9).value == today_str:
         res = []
-        txt_name = 'today_words-'+user_name+'.txt'
+        txt_name = data_path('today_words-'+user_name+'.txt')
         with open(txt_name, 'rb') as file:
             res = pickle.load(file)
         days = sheet.cell(row=2, column=8).value
@@ -101,7 +102,7 @@ def get_review(user_name):
 
 def report_mistake(mistake_list, user_name):
     tomorrow = (datetime.date.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-    file_name = 'record-'+user_name+'.xlsx'
+    file_name = data_path('record-'+user_name+'.xlsx')
     workbook = openpyxl.load_workbook(file_name)
     sheet = workbook.active
     search_string = mistake_list[0][:-1]
@@ -126,7 +127,7 @@ def send_reminder():
     logging.info('send_reminder function is running...')
     user_name_list = SendKey.user_name_list
     for user_name in user_name_list:
-        file_name = 'record-'+user_name+'.xlsx'
+        file_name = data_path('record-'+user_name+'.xlsx')
         workbook = openpyxl.load_workbook(file_name)
         sheet = workbook.active
         today = datetime.date.today()
@@ -138,7 +139,7 @@ def send_reminder():
         
 
 def error_book(user_name):
-    file_name = 'record-'+user_name+'.xlsx'
+    file_name = data_path('record-'+user_name+'.xlsx')
     workbook = openpyxl.load_workbook(file_name)
     sheet = workbook.active
     res = []
@@ -154,6 +155,3 @@ def error_book(user_name):
         res = 'No error!'
     workbook.close()
     return res, error_num_list
-    
-
-            
